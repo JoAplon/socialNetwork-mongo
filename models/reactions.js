@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const { Schema } = mongoose;
+const { Schema, model } = mongoose;
 
 const reactionSchema = new Schema({
     reactionId: {
@@ -26,4 +26,4 @@ reactionSchema.path('createdAt').get(function(value) {
     return new Date(value).toISOString();
 })
 
-module.exports = reactionSchema;
+module.exports = model('Reaction', reactionSchema);

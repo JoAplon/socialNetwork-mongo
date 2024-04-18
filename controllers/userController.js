@@ -74,4 +74,26 @@ async getAllUsers(req, res) {
         res.status(500).json(err);
     }
   },
+
+  async addFriend(req, res) {
+    const {userId, friendId} = req.params;
+
+    try {
+        const user = await User.findById(userId);
+
+        if (!user) {
+            return res.status(404).json({ message: 'User not found.' });
+        }
+
+        if (!user.friends.includes(friendId)) {
+            user.friends.push(friendId);
+            await user.save();
+        }
+
+        res.json({ message: 'Friend added successfully!' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Server error' });
+    }
+  }
 };
