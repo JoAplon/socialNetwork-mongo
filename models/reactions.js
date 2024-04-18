@@ -22,7 +22,7 @@ const reactionSchema = new Schema({
 });
 
 // 
-reactionSchema.path('createdt').get(function(value) {
+reactionSchema.path('createdAt').get(function(value) {
     return new Date(value).toISOString();
 })
 

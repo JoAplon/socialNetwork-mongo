@@ -1,4 +1,6 @@
-const { Schema, Types } = require('mongoose');
+const { Schema } = require('mongoose');
+const mongoose = require('mongoose')
+const Reaction = require('./reactions');
 
 const thoughtSchema = new Schema({
 
@@ -17,7 +19,10 @@ const thoughtSchema = new Schema({
         required: true
     },
     reactions: [
-        reactionSchema
+        {
+            type: Schema.Types.ObjectId,
+            ref: 'Reaction',
+        }
     ]
 });
 
@@ -27,10 +32,10 @@ thoughtSchema.virtual('reactionCount').get(function() {
 });
 
 // getter method to format createdAt timestamp
-thoughtSchema.path('createdAt').get(function() {
-    return new Date(value).toISOString();
+thoughtSchema.path('createdAt').get(function(value) {
+    return new Date(this.createdAt).toISOString();
 });
 
 const Thought = mongoose.model('Thoughts', thoughtSchema);
 
-module.exports = thoughtSchema;
+module.exports = Thought;

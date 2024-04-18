@@ -1,5 +1,6 @@
 const Thoughts = require('../models/thoughts');
 const User = require('../models/user');
+const reactionSchema = require('../models/reactions')
 
 module.exports = {
 async getAllThoughts(req, res) {
@@ -28,9 +29,9 @@ async getAllThoughts(req, res) {
 
   async createThought(req, res) {
     try {
-        const thought = Thoughts.create(req.body);
+        const thought = await Thoughts.create(req.body);
 
-        const user = User.findOneAndUpdate(
+        const user = await User.findOneAndUpdate(
 
             { _id: req.body.userId },
             { $addToSet: { thoughts: thought._id} },
@@ -69,7 +70,7 @@ async getAllThoughts(req, res) {
 
     async deleteThought(req, res) {
     try {
-        const thought = await Thoughts.findOneAndRemove({ _id: req.params.thoughtId });
+        const thought = await Thoughts.findOneAndDelete({ _id: req.params.thoughtId });
 
         if (!thought) {
             return res.status(404).json({ message: 'No thought with this ID!'});
@@ -89,6 +90,31 @@ async getAllThoughts(req, res) {
     } catch (err) {
         console.log(err);
         res.status(500).json(err);
+    }
+  },
+
+  async addReactionToThought(req, res) {
+    try {
+        const thought = await Thoughts.findById(req.params.thoughtId);
+
+        if (!thought) {
+            return res.status(404).json({ message: 'Thought not found.' });
+        }
+
+        const newReaction = new reactionSchema({
+            reactionBody: req.body.reactionBody,
+            username: req.body.username
+        });
+
+        const savedReaction = await newReaction.save();
+
+        thought.reactions.push(savedReaction._id);
+        await thought.save();
+
+        res.json({ message: 'Reaction added to the thought successfully!', reaction: savedReaction });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Server error' });
     }
   },
 };

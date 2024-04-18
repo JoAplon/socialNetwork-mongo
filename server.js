@@ -1,6 +1,21 @@
 const express = require('express');
-// Run npm install mongodb and require mongodb and MongoClient class
-const { MongoClient } = require('mongodb');
+const mongoose = require('mongoose');
+const userRoutes = require('./api/routes/userRoutes');
+const thoughtRoutes = require('./api/routes/thoughtRoutes');
+
+// app.use(express.urlencoded({ extended: true }));
+// app.use(routes);
 
 const app = express();
-const port = 3001;
+const PORT = 3001;
+
+app.use(express.json());
+
+mongoose.connect('mongodb://localhost/social_network_db');
+
+app.use('/api/users', userRoutes);
+app.use('/api/thoughts', thoughtRoutes);
+
+app.listen(PORT, () => {
+    console.log(`API server running on port ${PORT}!`);
+  });

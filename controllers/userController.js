@@ -4,7 +4,7 @@ const User = require('../models/user');
 module.exports = {
 async getAllUsers(req, res) {
     try {
-      const users = await Users.find();
+      const users = await User.find();
       res.json(users);
     } catch (err) {
       console.error(err);
@@ -15,7 +15,7 @@ async getAllUsers(req, res) {
   async getUserById(req, res) {
     const { userId } = req.params;
     try {
-      const user = await Users.findById(userId);
+      const user = await User.findById(userId);
       if (!user) {
         return res.status(404).json({ message: 'User not found' });
       }
@@ -43,7 +43,7 @@ async getAllUsers(req, res) {
 
   async updateUser(req, res) {
     try {
-        const user = await Users.findOneAndUpdate(
+        const user = await User.findOneAndUpdate(
             { _id: req.params.userId },
             { $set: req.body },
             { runValidators: true, new: true }
@@ -62,7 +62,7 @@ async getAllUsers(req, res) {
 
     async deleteUser(req, res) {
     try {
-        const user = await Users.findOneAndRemove({ _id: req.params.userId });
+        const user = await User.findOneAndDelete({ _id: req.params.userId });
 
         if (!user) {
             return res.status(404).json({ message: 'No user with this ID!'});
