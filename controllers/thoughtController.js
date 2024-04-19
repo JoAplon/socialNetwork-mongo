@@ -117,4 +117,31 @@ async getAllThoughts(req, res) {
         res.status(500).json({ message: 'Server error' });
     }
   },
+
+  async removeReaction(req, res) {
+
+    try {
+        const { thoughtId, reactionId } = req.params;
+        const thought = await Thoughts.findById(thoughtId);
+
+        if (!thought) {
+            return res.status(404).json({ message: 'Thought not found.' });
+        }
+
+        const reactionIndex = thought.reactions.indexOf(reactionId);
+
+        if (reactionIndex === -1) {
+            return res.status(404).json({ message: 'Reaction not found in the thought.' });
+        }
+
+        thought.reactions.splice(reactionIndex, 1);
+
+        await thought.save();
+
+        res.json({ message: 'Reaction removed from thought successfully!' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Server error.' });
+    }
+  }
 };
